@@ -28,11 +28,13 @@ psi_0 = np.array([1, 0, 0, 0], dtype=complex) #initial state
 
 def main():
 
-    P = {} #dict to store probabilities for each voltage
+    P_0 = {} #dict to store probabilities for each voltage
+    P_b = {} #dict to store probabilities for each voltage for bell
 
     for v in voltages:
 
-        p = [] #list to store probabilities for each time step
+        p_0 = [] #list to store probabilities for each time step
+        p_b = [] #list to store probabilities for each time step for bell
 
         R, R_dagger, E1, E2, E3, E4 = eigen(v) #get eigenvectors and eigenvalues
 
@@ -47,15 +49,19 @@ def main():
 
             c1 = psi_t[0] #coefficient of state 1
 
-            p.append(np.abs(c1)**2) #append probability to list
+            bell = 1/np.sqrt(2) * (np.array([0, 1, 1, 0], dtype=complex)) #bell state
 
-        P[v] = p #append list to dictionary
+            p_0.append(np.abs(c1)**2) #append probability to list
+            p_b.append(np.abs(np.dot(bell, psi_t))**2) #append probability to list for bell state
+
+        P_0[v] = p_0 #append list to dictionary
+        P_b[v] = p_b #append list to dictionary for bell state
 
     #Now we have a dictionary with keys as voltages and values as lists of probabilities. 
     #We can now plot the probabilities for each voltage.
 
-    give_plot(P, title='Probability of Being in State 1')
-
+    give_plot(P_0, title='Probability of Being in State 1')
+    give_plot(P_b, title='Probability of Being in Bell State')
 
 def eigen(V):
 
