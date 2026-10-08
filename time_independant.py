@@ -60,8 +60,8 @@ def main():
     #Now we have a dictionary with keys as voltages and values as lists of probabilities. 
     #We can now plot the probabilities for each voltage.
 
-    give_plot(P_0, title='Probability of Being in State 1')
-    give_plot(P_b, title='Probability of Being in Bell State')
+    give_plot(P_0, P_b)
+
 
 def eigen(V):
 
@@ -70,7 +70,7 @@ def eigen(V):
                             [ohm*np.exp(1j*phase), 0, 0, ohm*np.exp(-1j*phase)], 
                             [0, ohm*np.exp(1j*phase), ohm*np.exp(1j*phase), -2*delta+2*V]]) #Hamiltonian
 
-    eigenvalues, eigenvectors = np.linalg.eig(H) #eigenvalues and eigenvectors of the Hamiltonian
+    eigenvalues, eigenvectors = np.linalg.eigh(H) #eigenvalues and eigenvectors of the Hamiltonian
 
     E1, E2, E3, E4 = eigenvalues #assigning eigenvalues to variables
 
@@ -80,30 +80,45 @@ def eigen(V):
 
     return R, R_dagger, E1, E2, E3, E4
 
-def give_plot(P, title):
+def give_plot(P_0, P_b):
 
-    plot, ax = plt.subplots() #create plot
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 5)) #create plot
 
-    for v in P.keys():
+    for v in P_0.keys():
 
         if v == 0:
-            ax.plot(time, P[v], color='skyblue') 
+            ax1.plot(time, P_0[v], color='skyblue') 
 
         else:
-            ax.plot(time, P[v], color='darkred', alpha=0.2)
+            ax1.plot(time, P_0[v], color='darkred', alpha=0.1)
+
+    for v in P_b.keys():
+
+        if v == 0:
+            ax2.plot(time, P_b[v], color='skyblue') 
+
+        else:
+            ax2.plot(time, P_b[v], color='darkred', alpha=0.1)
 
 
+    ax1.set_ylabel('P |00>')
 
-    ax.set_xlabel('Time (s)')
-    ax.set_ylabel('Probability')
-    ax.set_title(title)
 
-    ax.set_ylim(0, 1) #set y limits
-    ax.set_xlim(0, 1e-6) #set x limits
+    ax2.set_xlabel('Time (microseconds)')
+    ax2.set_ylabel('P (Bell State)')
+   
+
+    ax1.set_ylim(0, 1) #set y limits
+    ax1.set_xlim(0, 1e-6) #set x limits
+
+    ax2.set_ylim(0, 1) #set y limits
+    ax2.set_xlim(0, 1e-6) #set x limits
 
 
 
     plt.show()
+
+
 
 if __name__ == "__main__":
     main()
