@@ -15,9 +15,9 @@ hbar = constants.hbar
 
 ohm = 2 * np.pi * 10**6         #rabi frequency
 
-delta = 10**6       #detuning
+delta = 10**6                   #detuning
 
-phase = np.pi/4     
+phase = 0    
 
 voltages = 2 * np.pi * np.linspace(0, 100e6, 1000)      
 
@@ -25,23 +25,6 @@ time = np.linspace(0, 1e-6, 100) #time array
 
 psi_0 = np.array([1, 0, 0, 0], dtype=complex) #initial state
 
-
-def eigen(V):
-
-    H = hbar/2 * np.array([ [2*delta, ohm*np.exp(-1j*phase), ohm*np.exp(-1j*phase), 0], 
-                            [ohm*np.exp(1j*phase), 0, 0, ohm*np.exp(-1j*phase)], 
-                            [ohm*np.exp(1j*phase), 0, 0, ohm*np.exp(-1j*phase)], 
-                            [0, ohm*np.exp(1j*phase), ohm*np.exp(1j*phase), -2*delta+2*V]]) #Hamiltonian
-
-    eigenvalues, eigenvectors = np.linalg.eig(H) #eigenvalues and eigenvectors of the Hamiltonian
-
-    E1, E2, E3, E4 = eigenvalues #assigning eigenvalues to variables
-
-    R = eigenvectors #eigenvector matrix
-
-    R_dagger = np.conjugate(R.T) #conjugate transpose of the eigenvector matrix
-
-    return R, R_dagger, E1, E2, E3, E4
 
 def main():
 
@@ -68,11 +51,28 @@ def main():
 
         P[v] = p #append list to dictionary
 
-    #Now we have a dictionary with keys as voltages and values as lists of probabilities for each time step. 
+    #Now we have a dictionary with keys as voltages and values as lists of probabilities. 
     #We can now plot the probabilities for each voltage.
 
     give_plot(P, title='Probability of Being in State 1')
 
+
+def eigen(V):
+
+    H = hbar/2 * np.array([ [2*delta, ohm*np.exp(-1j*phase), ohm*np.exp(-1j*phase), 0], 
+                            [ohm*np.exp(1j*phase), 0, 0, ohm*np.exp(-1j*phase)], 
+                            [ohm*np.exp(1j*phase), 0, 0, ohm*np.exp(-1j*phase)], 
+                            [0, ohm*np.exp(1j*phase), ohm*np.exp(1j*phase), -2*delta+2*V]]) #Hamiltonian
+
+    eigenvalues, eigenvectors = np.linalg.eig(H) #eigenvalues and eigenvectors of the Hamiltonian
+
+    E1, E2, E3, E4 = eigenvalues #assigning eigenvalues to variables
+
+    R = eigenvectors #eigenvector matrix
+
+    R_dagger = np.conjugate(R.T) #conjugate transpose of the eigenvector matrix
+
+    return R, R_dagger, E1, E2, E3, E4
 
 def give_plot(P, title):
 
@@ -81,10 +81,10 @@ def give_plot(P, title):
     for v in P.keys():
 
         if v == 0:
-            ax.plot(time, P[v], color='blue') 
+            ax.plot(time, P[v], color='skyblue') 
 
         else:
-            ax.plot(time, P[v], color='red', alpha=0.2)
+            ax.plot(time, P[v], color='darkred', alpha=0.2)
 
 
 
@@ -98,9 +98,6 @@ def give_plot(P, title):
 
 
     plt.show()
-
-
-
 
 if __name__ == "__main__":
     main()
