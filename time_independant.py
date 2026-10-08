@@ -114,7 +114,7 @@ def give_plot(P_0, P_b):
     ax2.set_ylim(0, 1) #set y limits
     ax2.set_xlim(0, 1e-6) #set x limits
 
-
+    plt.savefig('time_independant.png', dpi=300) #save figure
 
     plt.show()
 
