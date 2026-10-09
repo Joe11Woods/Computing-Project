@@ -37,6 +37,7 @@ def main():
 
     P_0 = {} #dict to store probabilities for each voltage
     P_b = {} #dict to store probabilities for each voltage for bell
+    d = [] #list to store detuning for each time step
 
     for v in voltages:
 
@@ -71,8 +72,11 @@ def main():
     #Now we have a dictionary with keys as voltages and values as lists of probabilities. 
     #We can now plot the probabilities for each voltage.
 
+    for t in time:
+        d.append(delta(t) / 2*np.pi) #append detuning to list
+
     print("Plotting...")
-    give_plot_t(P_0, P_b, "time_dependant.png")
+    give_plot_t(P_0, P_b,d, "time_dependant.png")
 
 
 def eigen_t(V,t):
@@ -93,50 +97,70 @@ def eigen_t(V,t):
 
     return R, R_dagger, E1, E2, E3, E4
 
+
+def give_plot_t(P_0, P_b, d, file_name):
+
+    # Convert time from seconds to microseconds
+    t_us = time * 1e6
+
+    # Create figure
+    fig, (ax1, ax2, ax3) = plt.subplots(
+        3, 1, figsize=(10, 8), sharex=True)
+
+    # Plot detuning
+    ax1.plot(t_us, d, color='darkgreen', linewidth=2)
+    ax1.set_ylabel(r'$\Delta(t)$')
     
-def give_plot_t(P_0, P_b, file_name):
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
-
     # Plot probability of |00>
-    for v in P_0.keys():
+    for v in P_0:
         if v == 0:
-            ax1.plot(time, P_0[v], color='deepskyblue',
-                     linewidth=2.5, label='V = 0')
+            ax2.plot(
+                t_us, P_0[v],
+                color='deepskyblue', linewidth=2.5,
+                label='V = 0'
+            )
         else:
-            ax1.plot(time, P_0[v], color='darkred',
-                     alpha=0.12, linewidth=1)
+            ax2.plot(
+                t_us, P_0[v],
+                color='darkred', alpha=0.15, linewidth=1
+            )
 
     # Plot probability of Bell state
-    for v in P_b.keys():
+    for v in P_b:
         if v == 0:
-            ax2.plot(time, P_b[v], color='deepskyblue',
-                     linewidth=2.5, label='V = 0')
+            ax3.plot(
+                t_us, P_b[v],
+                color='deepskyblue', linewidth=2.5,
+                label='V = 0'
+            )
         else:
-            ax2.plot(time, P_b[v], color='darkred',
-                     alpha=0.12, linewidth=1)
+            ax3.plot(
+                t_us, P_b[v],
+                color='darkred', alpha=0.15, linewidth=1
+            )
 
     # Labels and titles
-    ax1.set_ylabel(r'$P(|00\rangle)$')
-    ax2.set_ylabel(r'$P(|\Phi^+\rangle)$')
-    ax2.set_xlabel('Time (µs)')
+    ax2.set_ylabel(r'$P(|00\rangle)$')
 
-    # Axes
-    for ax in (ax1, ax2):
+    ax3.set_ylabel(r'$P(|\Phi^+\rangle)$')
+    ax3.set_xlabel('Time (µs)')
+
+    # Format probability axes
+    for ax in (ax2, ax3):
         ax.set_ylim(0, 1)
-        ax.set_xlim(0, 1e-6)
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
+        ax.set_yticks([0, 0.25, 0.5, 0.75, 1])
+    
+    # Format all axes
+    for ax in (ax1, ax2, ax3):
+        ax.set_xlim(t_us[0], t_us[-1])
+        ax.spines['top'].set_visible(True)
+        ax.spines['right'].set_visible(True)
 
-    # Convert time axis from seconds to microseconds
-    ax2.set_xlabel('Time (µs)')
-    ax2.set_xticks([0, 0.2e-6, 0.4e-6, 0.6e-6,
-                    0.8e-6, 1e-6])
-    ax2.set_xticklabels(['0', '0.2', '0.4', '0.6', '0.8', '1.0'])
-
+    # Final layout and save
     fig.tight_layout()
-    plt.savefig(file_name, dpi=300, bbox_inches='tight')
+    fig.savefig(file_name, dpi=300, bbox_inches='tight')
     plt.show()
+
 
 
 if __name__ == "__main__":
