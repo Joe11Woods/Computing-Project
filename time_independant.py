@@ -81,43 +81,48 @@ def eigen(V):
 
 def give_plot(P_0, P_b, file_name):
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 5)) #create plot
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
 
-    for v in P_0.keys(): #makes v=0 blue
-
+    # Plot probability of |00>
+    for v in P_0.keys():
         if v == 0:
-            ax1.plot(time, P_0[v], color='skyblue') 
-
+            ax1.plot(time, P_0[v], color='deepskyblue',
+                     linewidth=2.5, label='V = 0')
         else:
-            ax1.plot(time, P_0[v], color='darkred', alpha=0.1)
+            ax1.plot(time, P_0[v], color='darkred',
+                     alpha=0.12, linewidth=1)
 
-    for v in P_b.keys(): #makes v=0 blue
-
+    # Plot probability of Bell state
+    for v in P_b.keys():
         if v == 0:
-            ax2.plot(time, P_b[v], color='skyblue') 
-
+            ax2.plot(time, P_b[v], color='deepskyblue',
+                     linewidth=2.5, label='V = 0')
         else:
-            ax2.plot(time, P_b[v], color='darkred', alpha=0.1)
+            ax2.plot(time, P_b[v], color='darkred',
+                     alpha=0.12, linewidth=1)
 
+    # Labels and titles
+    ax1.set_ylabel(r'$P(|00\rangle)$')
+    ax2.set_ylabel(r'$P(|\Phi^+\rangle)$')
+    ax2.set_xlabel('Time (µs)')
 
-    ax1.set_ylabel('P |00>')
+    # Axes
+    for ax in (ax1, ax2):
+        ax.set_ylim(0, 1)
+        ax.set_xlim(0, 1e-6)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
 
+    # Convert time axis from seconds to microseconds
+    ax2.set_xlabel('Time (µs)')
+    ax2.set_xticks([0, 0.2e-6, 0.4e-6, 0.6e-6, 0.8e-6, 1e-6])
+    ax2.set_xticklabels(['0', '0.2', '0.4', '0.6', '0.8', '1.0'])
 
-    ax2.set_xlabel('Time (microseconds)')
-    ax2.set_ylabel('P (Bell State)')
-   
-
-    ax1.set_ylim(0, 1) #set y limits
-    ax1.set_xlim(0, 1e-6) #set x limits
-    ax1.set_xticklabels = False
-
-
-    ax2.set_ylim(0, 1) #set y limits
-    ax2.set_xlim(0, 1e-6) #set x limits
-
-    plt.savefig(file_name, dpi=300) #save figure
-
+    fig.tight_layout()
+    plt.savefig(file_name, dpi=300, bbox_inches='tight')
     plt.show()
+
+
 
 
 if __name__ == "__main__":
