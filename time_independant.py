@@ -52,7 +52,7 @@ def main():
             bell = 1/np.sqrt(2) * (np.array([0, 1, 1, 0], dtype=complex)) #bell state
 
             p_0.append(np.abs(c1)**2) #append probability to list
-            p_b.append(np.abs(np.dot(bell, psi_t))**2) #append probability to list for bell state
+            p_b.append(np.abs(np.vdot(bell, psi_t))**2) #append probability to list for bell state
 
         P_0[v] = p_0 #append list to dictionary
         P_b[v] = p_b #append list to dictionary for bell state
@@ -60,8 +60,7 @@ def main():
     #Now we have a dictionary with keys as voltages and values as lists of probabilities. 
     #We can now plot the probabilities for each voltage.
 
-    give_plot(P_0, P_b)
-
+    give_plot(P_0, P_b, "time_independant.png")
 
 def eigen(V):
 
@@ -80,11 +79,11 @@ def eigen(V):
 
     return R, R_dagger, E1, E2, E3, E4
 
-def give_plot(P_0, P_b):
+def give_plot(P_0, P_b, file_name):
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 5)) #create plot
 
-    for v in P_0.keys():
+    for v in P_0.keys(): #makes v=0 blue
 
         if v == 0:
             ax1.plot(time, P_0[v], color='skyblue') 
@@ -92,7 +91,7 @@ def give_plot(P_0, P_b):
         else:
             ax1.plot(time, P_0[v], color='darkred', alpha=0.1)
 
-    for v in P_b.keys():
+    for v in P_b.keys(): #makes v=0 blue
 
         if v == 0:
             ax2.plot(time, P_b[v], color='skyblue') 
@@ -110,11 +109,13 @@ def give_plot(P_0, P_b):
 
     ax1.set_ylim(0, 1) #set y limits
     ax1.set_xlim(0, 1e-6) #set x limits
+    ax1.set_xticklabels = False
+
 
     ax2.set_ylim(0, 1) #set y limits
     ax2.set_xlim(0, 1e-6) #set x limits
 
-    plt.savefig('time_independant.png', dpi=300) #save figure
+    plt.savefig(file_name, dpi=300) #save figure
 
     plt.show()
 
