@@ -19,7 +19,7 @@ delta = 10**6                   #detuning
 
 phase = 0    
 
-voltages = 2 * np.pi * np.linspace(0, 100e6, 1000)      
+voltages = 2 * np.pi * np.linspace(0, 100e6, 500)      
 
 time = np.linspace(0, 1e-6, 100) #time array
 
@@ -117,7 +117,6 @@ def give_plot(P_0, P_b):
     plt.savefig('time_independant.png', dpi=300) #save figure
 
     plt.show()
-
 
 
 if __name__ == "__main__":
